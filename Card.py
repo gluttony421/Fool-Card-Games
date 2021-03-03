@@ -43,7 +43,37 @@ class Deck(object):
         random.shuffle(cards)
         return cards
 
+    def card_strength(self):
+        pass
 
+
+class Player(object):
+    def __init__(self, cards, trump_cards):
+        self.cards = cards
+        self.trump_cards = trump_cards
+
+    def take_cards_from_the_deck(self):
+        pass
+
+    def make_a_move(self):
+        pass
+
+    def throw_a_card(self):
+        pass
+
+    def take_a_card_from_the_table(self):
+        pass
+
+
+class Table(object):
+    def take_player_cards(self):
+        pass
+
+    def give_cards_to_a_player(self):
+        pass
+
+    def hang_up(self):
+        pass
 
 card = Deck()
 print(card.cards_to_suit())
