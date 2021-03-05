@@ -22,22 +22,13 @@ class Deck(object):
     RANK = ["6", "7", "8", "9", "10", "J", "Q", "K", "A"]
     SUIT = ["h", "t", "c", "s"]
 
-    def defining_a_trump_card(self, card_deck):
-        trump = random.choice(card_deck)
-        for card in trump:
-            trump_suit = card[1]
-            break
-        trump_cards = []
-        #if trump_suit == "0":
-            #trump_suit = card[2]
-        for card in card_deck:
-            for c in card:
-                if c[1] == trump_suit:
-                    trump_cards.append(card)
-                elif c[1] == "0" and c[2] == trump_suit:
-                    trump_cards.append(card)
-                break
-        return trump_cards, trump, trump_suit
+    def card_strength(self):
+        power_total = []
+        __t = 1
+        for r in Deck.RANK:
+            power_total.append(__t)
+            __t += 1
+        return power_total
 
     def cards_to_suit(self, power_total):
         __couples = []
@@ -57,18 +48,26 @@ class Deck(object):
         card_deck.pop()
         return card_deck
 
+    def defining_a_trump_card(self, card_deck):
+        trump = random.choice(card_deck)
+        for card in trump:
+            trump_suit = card[1]
+            break
+        trump_cards = []
+        #if trump_suit == "0":
+            #trump_suit = card[2]
+        for card in card_deck:
+            for c in card:
+                if c[1] == trump_suit:
+                    trump_cards.append(card)
+                elif c[1] == "0" and c[2] == trump_suit:
+                    trump_cards.append(card)
+                break
+        return trump_cards, trump, trump_suit
+
     def shuffle_the_deck(self, card_deck):
         random.shuffle(card_deck)
         return card_deck
-
-    def card_strength(self):
-        power_total = []
-        __t = 1
-        for r in Deck.RANK:
-            power_total.append(__t)
-            __t += 1
-        return power_total
-
 
 
 class Player(object):
@@ -77,7 +76,7 @@ class Player(object):
 
     def take_cards_from_the_deck(self, card_deck):
         self.cards = []
-        if not self.cards[5]:
+        if len(self.cards) < 6:
             for card in card_deck:
                 self.cards.append(card)
                 card_deck.remove(card)
@@ -110,7 +109,10 @@ class Table(object):
 
 def main():
     deck = Deck()
-    print(deck.defining_a_trump_card(deck.cards_to_suit(deck.card_strength())),"\n")
-    print(deck.shuffle_the_deck(deck.cards_to_suit(deck.card_strength())))
+    player = Player(deck.defining_a_trump_card(deck.cards_to_suit(deck.card_strength())))
+    #print(deck.defining_a_trump_card(deck.cards_to_suit(deck.card_strength())),"\n")
+    #print(deck.shuffle_the_deck(deck.cards_to_suit(deck.card_strength())))
+    print(player.take_cards_from_the_deck(deck.cards_to_suit(deck.card_strength())))
+
 
 main()
