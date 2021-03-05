@@ -19,32 +19,49 @@
 import random
 
 class Deck(object):
-    RANG = ["6", "7", "8", "9", "10", "J", "Q", "K", "A"]
+    RANK = ["6", "7", "8", "9", "10", "J", "Q", "K", "A"]
     SUIT = ["h", "t", "c", "s"]
 
-    def defining_a_trump_card(self, cards):
-        trump = random.choice(cards)
+    def _defining_a_trump_card(self, power_in_cards):
+        trump = random.choice(power_in_cards)
         trump_suit = trump[1]
         trump_cards = []
         if trump_suit == "0":
             trump_suit = trump[2]
-        for card in cards:
+        for card in power_in_cards:
             if card[1] == trump_suit:
                 trump_cards.append(card)
             elif card[1] == "0" and card[2] == trump_suit:
                 trump_cards.append(card)
         return trump_cards, trump, trump_suit
 
-    def cards_to_suit(self):
-        cards = []
-        for rank in Deck.RANG:
+    def _cards_to_suit(self, power_total):
+        __couples = []
+        deck = [[]]
+        __v = 0
+        __p = 0
+        for rank in Deck.RANK:
             for suit in Deck.SUIT:
-                cards.append(rank + suit)
-        random.shuffle(cards)
-        return cards
+                for i in range(4):
+                    deck[__p].append(rank + suit)
+                    deck[__p].append(power_total[__v])
+                    deck.append(__couples)
+                    __couples = []
+                    __p += 1
+                    break
+            __v += 1
+        deck.pop()
+        random.shuffle(deck)
+        return deck
 
-    def card_strength(self):
-        pass
+    def _card_strength(self):
+        power_total = []
+        __t = 1
+        for r in Deck.RANK:
+            power_total.append(__t)
+            __t += 1
+        return power_total
+
 
 
 class Player(object):
@@ -76,7 +93,7 @@ class Table(object):
         pass
 
 card = Deck()
-print(card.cards_to_suit())
-print(card.defining_a_trump_card(Deck.cards_to_suit(card)))
+print(card._cards_to_suit(card._card_strength()))
+#print(card.defining_a_trump_card(card.cards_to_suit(card.card_strength())))
 
 
