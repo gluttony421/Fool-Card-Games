@@ -18,56 +18,57 @@
 
 import random
 
-class Deck(object):
-    RANK = ["6", "7", "8", "9", "10", "J", "Q", "K", "A"]
-    SUIT = ["h", "t", "c", "s"]
+RANK = ["6", "7", "8", "9", "10", "J", "Q", "K", "A"]
+SUIT = ["h", "t", "c", "s"]
 
-    def card_strength(self):
-        power_total = []
-        __t = 1
-        for r in Deck.RANK:
-            power_total.append(__t)
-            __t += 1
-        return power_total
 
-    def cards_to_suit(self, power_total):
-        __couples = []
-        card_deck = [[]]
-        __v = 0
-        __p = 0
-        for rank in Deck.RANK:
-            for suit in Deck.SUIT:
-                for i in range(4):
-                    card_deck[__p].append(rank + suit)
-                    card_deck[__p].append(power_total[__v])
-                    card_deck.append(__couples)
-                    __couples = []
-                    __p += 1
-                    break
-            __v += 1
-        card_deck.pop()
-        return card_deck
+def card_strength():
+    t = 1
+    power_total = []
+    for r in RANK:
+        power_total.append(t)
+        t += 1
+    return power_total
 
-    def defining_a_trump_card(self, card_deck):
-        trump = random.choice(card_deck)
-        for card in trump:
-            trump_suit = card[1]
-            break
-        trump_cards = []
-        #if trump_suit == "0":
-            #trump_suit = card[2]
-        for card in card_deck:
-            for c in card:
-                if c[1] == trump_suit:
-                    trump_cards.append(card)
-                elif c[1] == "0" and c[2] == trump_suit:
-                    trump_cards.append(card)
+
+def cards_to_suit(power_total):
+    couples = []
+    v = 0
+    p = 0
+    card_deck = [[]]
+    for rank in RANK:
+        for suit in SUIT:
+            for i in range(4):
+                card_deck[p].append(rank + suit)
+                card_deck[p].append(power_total[v])
+                card_deck.append(couples)
+                couples = []
+                p += 1
                 break
-        return trump_cards, trump, trump_suit
+        v += 1
+    card_deck.pop()
+    return card_deck
 
-    def shuffle_the_deck(self, card_deck):
-        random.shuffle(card_deck)
-        return card_deck
+
+def shuffle_the_deck(card_deck):
+    random.shuffle(card_deck)
+    return card_deck
+
+
+def defining_a_trump_card(card_deck):
+    trump = random.choice(card_deck)
+    trump_cards = []
+    for card in trump:
+        trump_suit = card[1]
+        break
+    for card in card_deck:
+        for c in card:
+            if c[1] == trump_suit:
+                trump_cards.append(card)
+            elif c[1] == "0" and c[2] == trump_suit:
+                trump_cards.append(card)
+            break
+    return trump_cards, trump, trump_suit
 
 
 class Player(object):
@@ -75,20 +76,52 @@ class Player(object):
         self.trump_cards = trump_cards
 
     def take_cards_from_the_deck(self, card_deck):
-        self.cards = []
-        if len(self.cards) < 6:
-            for card in card_deck:
-                self.cards.append(card)
-                card_deck.remove(card)
-        return self.cards
+        cards = []
+        full_deck = False
+        while not full_deck:
+            if len(cards) < 6:
+                for card in card_deck:
+                    cards.append(card)
+                    card_deck.remove(card)
+                    break
+            else:
+                full_deck = True
+        return cards
 
+    def defining_trumps_in_hand(self, cards):
+        my_trump = []
+        for card in cards:
+            for trump in self.trump_cards:
+                for t in trump:
+                    if card != t:
+                        break
+                    else:
+                        my_trump.append(card)
+                        break
+        return my_trump
 
-    def defining_trumps_in_hand(self):
-        self.trump_cards
-        pass
+    def make_a_move(self, cards):
+        card_on_the_table = None
+        card_in_hand = False
+        while not card_in_hand:
+            chosen_card = input("Выбирете карту: ")
+            for card in cards:
+                for c in card:
+                    if chosen_card != c:
+                        break
+                    else:
+                        cards.remove(card)
+                        card_on_the_table = card
+                        card_in_hand = True
+                        break
+                if card_in_hand:
+                    break
+            if not card_in_hand:
+                print("Нет такой карты")
+            else:
+                print("Вы положили карту на стол")
+                return card_on_the_table
 
-    def make_a_move(self):
-        pass
 
     def throw_a_card(self):
         pass
@@ -107,12 +140,11 @@ class Table(object):
     def hang_up(self):
         pass
 
+
 def main():
-    deck = Deck()
-    player = Player(deck.defining_a_trump_card(deck.cards_to_suit(deck.card_strength())))
-    #print(deck.defining_a_trump_card(deck.cards_to_suit(deck.card_strength())),"\n")
-    #print(deck.shuffle_the_deck(deck.cards_to_suit(deck.card_strength())))
-    print(player.take_cards_from_the_deck(deck.cards_to_suit(deck.card_strength())))
+    player = Player(defining_a_trump_card(shuffle_the_deck(cards_to_suit(card_strength()))))
+    print(player.defining_trumps_in_hand(player.take_cards_from_the_deck((shuffle_the_deck(cards_to_suit(card_strength()))))))
+    player.make_a_move(player.take_cards_from_the_deck((shuffle_the_deck(cards_to_suit(card_strength())))))
 
 
 main()
