@@ -22,6 +22,7 @@ RANK = ["6", "7", "8", "9", "10", "J", "Q", "K", "A"]
 SUIT = ["h", "t", "c", "s"]
 
 
+
 def card_strength():
     t = 1
     power_total = []
@@ -72,8 +73,9 @@ def defining_a_trump_card(card_deck):
 
 
 class Player(object):
-    def __init__(self, trump_cards):
+    def __init__(self, trump_cards, cards_on_the_table=[]):
         self.trump_cards = trump_cards
+        self.cards_on_the_table = cards_on_the_table
 
     def take_cards_from_the_deck(self, card_deck):
         cards = []
@@ -101,7 +103,6 @@ class Player(object):
         return my_trump
 
     def make_a_move(self, cards):
-        card_on_the_table = None
         card_in_hand = False
         while not card_in_hand:
             chosen_card = input("Выбирете карту: ")
@@ -111,7 +112,7 @@ class Player(object):
                         break
                     else:
                         cards.remove(card)
-                        card_on_the_table = card
+                        self.cards_on_the_table.append(card)
                         card_in_hand = True
                         break
                 if card_in_hand:
@@ -120,31 +121,54 @@ class Player(object):
                 print("Нет такой карты")
             else:
                 print("Вы положили карту на стол")
-                return card_on_the_table
+                return cards
 
 
-    def throw_a_card(self):
-        pass
+    def throw_a_card(self, cards):
+        flag = False
+        for card_on_the_table in self.cards_on_the_table:
+            for card_rank_on_the_table in card_on_the_table[0]:
+                if flag:
+                    break
+                for i in card_rank_on_the_table[0]:
+                    if flag:
+                        break
+                    if i == "1":
+                        i = "10"
+                    for card in cards:
+                        if flag:
+                            break
+                        for c in card[0]:
+                            if c == "1":
+                                c = "10"
 
-    def take_a_card_from_the_table(self):
-        pass
+                            if i != c:
+                                break
+                            else:
+                                flag = True
+                                break
+                break
+        if flag:
+            print("Вы можете подкинуть карту")
+        else:
+            print("Вам нечего подкинуть")
 
 
-class Table(object):
-    def take_player_cards(self):
-        pass
 
-    def give_cards_to_a_player(self):
-        pass
+    def take_a_card_from_the_table(self, cards):
+        desire_to_take = input("Вы хотите забрать?: ")
+        if desire_to_take == "да":
+            for card_on_the_table in self.cards_on_the_table:
+                cards.append(card_on_the_table)
+                self.cards_on_the_table.remove(card_on_the_table)
 
-    def hang_up(self):
-        pass
 
 
 def main():
     player = Player(defining_a_trump_card(shuffle_the_deck(cards_to_suit(card_strength()))))
-    print(player.defining_trumps_in_hand(player.take_cards_from_the_deck((shuffle_the_deck(cards_to_suit(card_strength()))))))
-    player.make_a_move(player.take_cards_from_the_deck((shuffle_the_deck(cards_to_suit(card_strength())))))
+    print(player.take_cards_from_the_deck((shuffle_the_deck(cards_to_suit(card_strength())))))
+    player.take_a_card_from_the_table(player.make_a_move(player.take_cards_from_the_deck((shuffle_the_deck(cards_to_suit(card_strength()))))))
+    #player.throw_a_card(player.make_a_move(player.take_cards_from_the_deck((shuffle_the_deck(cards_to_suit(card_strength()))))))
 
 
 main()
