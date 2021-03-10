@@ -72,6 +72,16 @@ def defining_a_trump_card(card_deck):
     return trump_cards, trump, trump_suit
 
 
+def trump_card_strength(trump_cards):
+    for strength_trump in trump_cards[0]:
+        for i in strength_trump:
+            if type(i) is int:
+                strength_trump.remove(i)
+                i += 10
+                strength_trump.append(i)
+                print(i)
+
+
 class Player(object):
     def __init__(self, trump_cards, cards_on_the_table=[]):
         self.trump_cards = trump_cards
@@ -163,12 +173,19 @@ class Player(object):
                 self.cards_on_the_table.remove(card_on_the_table)
 
 
+class Enemy(Player):
+    def __init__(self):
+        super(Player.self).__init__()
+        pass
+
+
 
 def main():
-    player = Player(defining_a_trump_card(shuffle_the_deck(cards_to_suit(card_strength()))))
-    print(player.take_cards_from_the_deck((shuffle_the_deck(cards_to_suit(card_strength())))))
-    player.take_a_card_from_the_table(player.make_a_move(player.take_cards_from_the_deck((shuffle_the_deck(cards_to_suit(card_strength()))))))
+    #player = Player(defining_a_trump_card(shuffle_the_deck(cards_to_suit(card_strength()))))
+    #print(player.take_cards_from_the_deck((shuffle_the_deck(cards_to_suit(card_strength())))))
+    #player.take_a_card_from_the_table(player.make_a_move(player.take_cards_from_the_deck((shuffle_the_deck(cards_to_suit(card_strength()))))))
     #player.throw_a_card(player.make_a_move(player.take_cards_from_the_deck((shuffle_the_deck(cards_to_suit(card_strength()))))))
+    trump_card_strength(defining_a_trump_card(shuffle_the_deck(cards_to_suit(card_strength()))))
 
 
 main()
