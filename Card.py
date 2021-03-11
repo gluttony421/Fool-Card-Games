@@ -82,8 +82,9 @@ class Deck(object):
 
 
 class Player(object):
-    def __init__(self, trump_cards, cards=[], cards_on_the_table=[]):
+    def __init__(self, trump_cards, turn, cards=[], cards_on_the_table=[]):
         self.trump_cards = trump_cards
+        self.turn = turn
         self.cards_on_the_table = cards_on_the_table
         self.cards = cards
 
@@ -99,8 +100,8 @@ class Player(object):
                 full_deck = True
 
     def make_a_move(self):
-        card_in_hand = False
-        while not card_in_hand:
+        self.turn = True
+        while self.turn:
             chosen_card = input("Выбирете карту: ")
             for card in self.cards:
                 for c in card:
@@ -109,11 +110,11 @@ class Player(object):
                     else:
                         self.cards.remove(card)
                         self.cards_on_the_table.append(card)
-                        card_in_hand = True
+                        self.turn = False
                         break
-                if card_in_hand:
+                if not self.turn:
                     break
-            if not card_in_hand:
+            if self.turn:
                 print("Нет такой карты")
             else:
                 print("Вы положили карту на стол")
@@ -156,12 +157,18 @@ class Player(object):
 
 
 class Enemy(Player):
-    def __init__(self):
-        super(Player.self).__init__()
+    def __init__(self, trump_cards, turn, cards=[], cards_on_the_table=[]):
+        super().__init__(trump_cards, turn, cards=[], cards_on_the_table=[])
 
     def make_a_move(self):
-        minimum_card = min(self.cards)
-        self.cards_on_the_table.append(minimum_card)
+        strength = []
+        for card in self.cards:
+            for c in card[1:]:
+                strength.append(c)
+        minimum_strength = strength.index(min(strength))
+        minimum_volue = self.cards[minimum_strength]
+        self.cards.remove(minimum_volue)
+        self.cards_on_the_table.append(minimum_volue)
 
     def throw_a_card(self):
         pass
@@ -171,8 +178,10 @@ class Enemy(Player):
 
 
 def main():
+    turn = False
     deck = Deck()
-    player = Player(deck.trump_cards)
+    player = Player(deck.trump_cards, turn)
+    enemy = Enemy(deck.trump_cards, turn)
     deck.card_strength()
     deck.cards_to_suit()
     deck.shuffle_the_deck()
@@ -181,11 +190,13 @@ def main():
     print(deck.trump_cards)
     print(deck.trump_suit)
     print(deck.trump)
-    player.take_cards_from_the_deck(deck.card_deck)
-    print(player.cards)
-    player.make_a_move()
-    player.throw_a_card()
-    player.take_a_card_from_the_table()
+    #player.take_cards_from_the_deck(deck.card_deck)
+    #print(player.cards)
+    enemy.take_cards_from_the_deck(deck.card_deck)
+    print(enemy.cards)
+    enemy.make_a_move()
+    print(enemy.cards_on_the_table)
+    print(enemy.cards)
 
 
 
