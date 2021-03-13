@@ -56,7 +56,7 @@ class Deck(object):
         random.shuffle(self.card_deck)
 
     def defining_a_trump_card(self):
-        self.trump = random.choice(self.card_deck)
+        self.trump = random.choice(self.card_deck[15:])
         for card in self.trump:
             if card[1] == "0":
                 self.trump_suit = card[2]
@@ -78,15 +78,15 @@ class Deck(object):
                     strength_trump.remove(i)
                     i += 10
                     strength_trump.append(i)
-                    print(i)
 
 
 class Player(object):
-    def __init__(self, trump_cards, turn, cards=[], cards_on_the_table=[]):
+    def __init__(self, trump_cards, turn, cards=[], cards_on_the_table=[], beat_cards=[]):
         self.trump_cards = trump_cards
         self.turn = turn
         self.cards_on_the_table = cards_on_the_table
         self.cards = cards
+        self.beat_cards = beat_cards
 
     def take_cards_from_the_deck(self, card_deck):
         full_deck = False
@@ -100,24 +100,73 @@ class Player(object):
                 full_deck = True
 
     def make_a_move(self):
+        if self.turn:
+            while self.turn:
+                chosen_card = input("Выбирете карту: ")
+                for card in self.cards:
+                    for c in card:
+                        if chosen_card != c:
+                            break
+                        else:
+                            self.cards.remove(card)
+                            self.cards_on_the_table.append(card)
+                            self.turn = False
+                            break
+                    if not self.turn:
+                        break
+                if self.turn:
+                    print("Нет такой карты")
+                else:
+                    print("Вы положили карту на стол")
+#не принимает 10
+    def beating(self):
         self.turn = True
-        while self.turn:
-            chosen_card = input("Выбирете карту: ")
-            for card in self.cards:
-                for c in card:
-                    if chosen_card != c:
-                        break
-                    else:
-                        self.cards.remove(card)
-                        self.cards_on_the_table.append(card)
-                        self.turn = False
-                        break
-                if not self.turn:
-                    break
-            if self.turn:
-                print("Нет такой карты")
-            else:
-                print("Вы положили карту на стол")
+        if self.turn:
+            if len(self.cards_on_the_table) != 0:
+                while self.turn:
+                    chosen_card = input("Выбирете карту: ")
+                    for card in self.cards:
+                        for t in card[:1]:
+                            if chosen_card != t:
+                                break
+                            else:
+                                for card_table in self.cards_on_the_table:
+                                    for c in card[1:]:
+                                        for n in card_table[:1]:
+                                            print(c)
+                                            if c > 10:
+                                                print("Вы ходите козырем")
+                                                if card[1:] > card_table[1:]:
+                                                    self.cards.remove(card)
+                                                    self.beat_cards.append(card)
+                                                    print("Вы бьёте карту")
+                                                    self.turn = False
+                                                else:
+                                                    print("Вы не бьёте карту")
+                                            elif t[1:] != n[1:]:
+                                                for tc in t[0]:
+                                                    if tc == "1":
+                                                        if t[2] != n[1:]:
+                                                            print("Масть не совпадает")
+                                                        elif card[1:] > card_table[1:] and t[2] == n[1:]:
+                                                            self.cards.remove(card)
+                                                            self.beat_cards.append(card)
+                                                            print("Вы бьёте карту")
+                                                            self.turn = False
+                                                        else:
+                                                            print("Карта слишком мала")
+                                            else:
+                                                print("Масть совпадает")
+                                                if card[1:] > card_table[1:] and t[1:] == n[1:]:
+                                                    self.cards.remove(card)
+                                                    self.beat_cards.append(card)
+                                                    print("Вы бьёте карту")
+                                                    self.turn = False
+                                                else:
+                                                    print("Вы не бьёте карту")
+                    if self.turn:
+                        print("Выберите другую карту")
+
 
     def throw_a_card(self):
         flag = False
@@ -178,7 +227,7 @@ class Enemy(Player):
 
 
 def main():
-    turn = False
+    turn = True
     deck = Deck()
     player = Player(deck.trump_cards, turn)
     enemy = Enemy(deck.trump_cards, turn)
@@ -186,17 +235,21 @@ def main():
     deck.cards_to_suit()
     deck.shuffle_the_deck()
     deck.defining_a_trump_card()
-    print(deck.card_deck)
-    print(deck.trump_cards)
-    print(deck.trump_suit)
+    deck.trump_card_strength()
+
+    #print(deck.card_deck)
+    #print(deck.trump_cards)
+    #print(deck.trump_suit)
     print(deck.trump)
-    #player.take_cards_from_the_deck(deck.card_deck)
-    #print(player.cards)
-    enemy.take_cards_from_the_deck(deck.card_deck)
-    print(enemy.cards)
-    enemy.make_a_move()
-    print(enemy.cards_on_the_table)
-    print(enemy.cards)
+    player.take_cards_from_the_deck(deck.card_deck)
+    print(player.cards)
+    player.make_a_move()
+    player.beating()
+    #enemy.take_cards_from_the_deck(deck.card_deck)
+   # print(enemy.cards)
+    #enemy.make_a_move()
+    #print(enemy.cards_on_the_table)
+   # print(enemy.cards)
 
 
 
